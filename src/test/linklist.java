@@ -572,7 +572,7 @@ public class linklist {
     	if(head == null || head.next == null) return head; 
 
     	ListNode slow=head, fast = head; 
-    	while(fast!=null && fast.next !=null)
+    	while(fast.next!=null && fast.next.next !=null)
     	{
     		fast=fast.next.next;
     		slow = slow.next;
@@ -580,9 +580,9 @@ public class linklist {
     	ListNode right = slow.next;
     	slow.next = null;
     	   	
-    	sortList(head);
-    	sortList(right);
-    	return mergeLists(head, right);
+    	ListNode l1 = sortList(head);
+    	ListNode l2 = sortList(right);
+    	return mergeLists(l1, l2);
     }
     
     

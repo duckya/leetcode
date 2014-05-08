@@ -8,11 +8,11 @@ import java.util.HashSet;
 public class test {
 
 	public static void main (String args[]) {
-		int A[] = {2,1};
+		int A[] = {1};
 		int B[] = {1,2};
 		
 		test testA =new test();
-		testA.canCompleteCircuit(B, A);
+		testA.searchRange(A,1);
 		System.out.println();
 	}
 
@@ -1016,5 +1016,122 @@ public class test {
 
     }
 
+    public int firstMissingPositive(int[] A) {
+    	for(int i =1; i<=A.length; i++)
+    	{
+    		int j;
+    		for(j=0; j<A.length; j++)
+    		{
+    			if(A[j] == i) break;
+    		}
+    		if(j==A.length) return i;
+    	}
+    	return A.length+1;
+    }
+    
+    public void sortColors(int[] A) {
+    	quicksort(A, 0);
+    	quicksort(A, 1);
+    }
+    
+    private void quicksort(int[] A, int mid)
+    {
+    	int i=0, j=A.length-1;
+    	while(i<j)
+    	{
+    		if(A[i]<=mid)
+    			i++;
+    		else if(A[j]>mid)
+    			j--;
+    		else{
+    			int t = A[i];
+    			A[i] = A[j]; 
+    			A[j] = t;
+    			
+    			i++; 
+    			j--;
+    		}
+    	}
+    	
+    }
+    
+    public int[] searchRange(int[] A, int target) {
+        int l=0, r=A.length-1, mid=A.length/2;
+        boolean bfound = false;
+        while(l<=r)
+        {
+        	if(A[mid]<target)
+        	{
+        		l=mid+1; 
+        		mid=(l+r)/2;
+        	}else if(A[mid]>target)
+        	{
+        		r=mid-1;
+        		mid=(l+r)/2;
+        	}else
+        	{
+        		bfound =  true;
+        		break;
+        	}
+        }
+        
+        if(!bfound) 
+        {
+        	int[] res = {-1, -1};
+        	return res;
+        }
+        int min = mid, max = min;
+        while(min>=0 && A[min] == target)
+        {
+        	min--;
+        }
+        while(max<A.length && A[max] == target)
+        {
+        	max++;
+        }
+        int[] res = {min+1, max-1};
+        return res;
+    }
+
+    public int searchInsert(int[] A, int target) {
+    	int l=0, r=A.length-1, mid=A.length/2;
+        while(l<=r)
+        {
+        	if(A[mid]<target)
+        	{
+        		l=mid+1; 
+        		mid=(l+r)/2;
+        	}else if(A[mid]>target)
+        	{
+        		r=mid-1;
+        		mid=(l+r)/2;
+        	}else
+        	{
+        		return mid;
+        	}
+        }
+        
+        if(A[mid]>target) 
+        	return mid;
+        else
+        	return mid+1;
+    }
+    
+    public ArrayList<ArrayList<Integer>> subsets(int[] S) {
+        Arrays.sort(S);
+        ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+        for(int i=0; i<=S.length; i++)
+        {
+        	
+        }
+        for(int s:S)
+        {
+        	ArrayList<Integer> t = new ArrayList<Integer>();
+        	t.add(s);
+        	res.add(t);		
+        }
+        
+        return res;
+    }
 }
 
