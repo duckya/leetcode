@@ -8,11 +8,11 @@ import java.util.HashSet;
 public class test {
 
 	public static void main (String args[]) {
-		int A[] = {1};
+		int A[] = {1,1};
 		int B[] = {1,2};
 		
 		test testA =new test();
-		testA.searchRange(A,1);
+		testA.subsetsWithDup(A);
 		System.out.println();
 	}
 
@@ -1119,19 +1119,81 @@ public class test {
     
     public ArrayList<ArrayList<Integer>> subsets(int[] S) {
         Arrays.sort(S);
-        ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
-        for(int i=0; i<=S.length; i++)
-        {
-        	
-        }
-        for(int s:S)
-        {
-        	ArrayList<Integer> t = new ArrayList<Integer>();
-        	t.add(s);
-        	res.add(t);		
-        }
-        
-        return res;
+        return subsets(S, 0);
     }
+    
+    private ArrayList<ArrayList<Integer>> subsets(int[] S, int startpos)
+    {
+    	ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	if(startpos == S.length-1)
+    	{
+    		ArrayList<Integer> t = new ArrayList<Integer>();
+    		t.add(S[startpos]);
+    		res.add(t);
+    		
+    		res.add(new ArrayList<Integer>());
+    	}else
+    	{
+    		ArrayList<ArrayList<Integer>> r = subsets(S, startpos+1);
+    		res.addAll(r);
+    		for(ArrayList<Integer> rt:r)
+    		{
+    			ArrayList<Integer> t = new ArrayList<Integer>();
+    			t.add(S[startpos]);
+    			t.addAll(rt);
+    			if(!res.contains(t))res.add(t);
+    		}
+    	}
+    	
+    	return res;
+    	
+    }
+    
+    public ArrayList<ArrayList<Integer>> subsetsWithDup(int[] num) {
+        Arrays.sort(num);
+        return subsetsWithDup(num, 0);
+    }
+    
+    private ArrayList<ArrayList<Integer>> subsetsWithDup(int[] S, int startpos)
+    {
+    	ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	if(startpos == S.length-1)
+    	{
+    		ArrayList<Integer> t = new ArrayList<Integer>();
+    		t.add(S[startpos]);
+    		res.add(t);
+    		
+    		res.add(new ArrayList<Integer>());
+    	}else
+    	{
+    		ArrayList<ArrayList<Integer>> r = subsetsWithDup(S, startpos+1);
+    		res.addAll(r);
+    		int prenumber = 0;
+
+    		int i = startpos+1;
+    		while(i<S.length && S[i]==S[startpos])
+    		{
+    			i++;
+    			prenumber++;
+    		}
+    		for(ArrayList<Integer> rt:r)
+    		{
+    			if(prenumber==0 || (rt.size() >= prenumber && rt.get(prenumber-1)==S[startpos])){
+	    			ArrayList<Integer> t = new ArrayList<Integer>();
+	    			t.add(S[startpos]);
+	    			t.addAll(rt);
+	    			res.add(t);
+    			}
+    		}
+    	}
+    	
+    	return res;
+    	
+    }
+
+    public ArrayList<ArrayList<Integer>> combine(int n, int k) {
+        
+    }
+
 }
 
