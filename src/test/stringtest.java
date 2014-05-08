@@ -498,5 +498,8 @@ public class stringtest {
         
     }
 
+    public ArrayList<String> letterCombinations(String digits) {
+        
+    }
 
 }

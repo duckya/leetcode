@@ -1192,7 +1192,30 @@ public class test {
     }
 
     public ArrayList<ArrayList<Integer>> combine(int n, int k) {
-        
+    	ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	
+    	if(k==0 || k>n) return res;
+    	if(k==1) 
+    	{
+    		for(int i=1; i<=n; i++)
+    		{
+    			ArrayList<Integer> t = new ArrayList<Integer>();
+    			t.add(i);
+    			res.add(t);
+    		}
+    		return res;
+    	}
+    	ArrayList<ArrayList<Integer>> res1 = combine(n-1, k);
+    	ArrayList<ArrayList<Integer>> res2 = combine(n-1, k-1);
+    	res.addAll(res1);
+    	
+    	for(ArrayList<Integer> r:res2)
+    	{
+    		r.add(n);
+    		res.add(r);
+    	}
+    	
+    	return res;
     }
 
 }
