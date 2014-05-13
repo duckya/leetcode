@@ -11,10 +11,10 @@ public class stringtest {
 	public static void main (String args[]) {
 		int a = 20;
 		int B[] = {1,2};
-		String t = "20";
+		String t = "wlrbbmqbhcdarzowkkyhiddqscdxrjmowfrxsjybldbefsarcbynecdyggxxpklorellnmpapqfwkhopkmco";
 		stringtest testA =new stringtest();
 		//testA.longestPalindrome(t);
-		System.out.println(testA.countAndSay(a));
+		System.out.println(testA.lengthOfLongestSubstring(t));
 	}
 	
     public String reverseWords(String s) {
@@ -499,7 +499,91 @@ public class stringtest {
     }
 
     public ArrayList<String> letterCombinations(String digits) {
-        
+    	ArrayList<String> map = new ArrayList<String>();
+    	map.add("");
+    	map.add("");
+    	map.add("abc");
+    	map.add("def");
+    	map.add("ghi");
+    	map.add("jkl");
+    	map.add("mno");
+    	map.add("pqrs");
+    	map.add("tuv");
+    	map.add("wxyz");
+    	
+    	return combineletter(digits, map);
+    	
+    }
+    
+    private ArrayList<String> combineletter(String digits, ArrayList<String> map)
+    {
+    	ArrayList<String> res = new ArrayList<String>();
+    	if(digits.length() == 0) 
+    	{
+    		res.add("");
+    		return res;
+    	}
+    	
+    	int digit = Integer.parseInt(digits.substring(0, 1));    
+    	String mapping = map.get(digit);
+   		String rest = digits.substring(1);
+   		ArrayList<String> prev = combineletter(rest, map);
+   		
+   		for(char a:mapping.toCharArray())
+   		{
+   			for(String r:prev)
+   			{
+   				String t = a + r;
+   				res.add(t);
+   			}
+   		}
+    		
+    	return res;
     }
 
+    public int lengthOfLongestSubstring1(String s) {
+        if(s.length()<=1) return s.length();
+        int i=0, max=1;
+        int[] map=new int[256];
+        
+        for(int k=0; k<256; k++) map[k] = -1;
+        
+    	while(i<s.length()-1)
+    	{
+    		map[s.charAt(i)] = i;
+    		int j=i+1;
+    		for(;j<s.length() && (map[s.charAt(j)] < i || map[s.charAt(j)]== j); j++){
+    			map[s.charAt(j)] = j;
+    		}
+    		max=Math.max(max, j-i);
+    		if(j==s.length()) return max;
+    		i=map[s.charAt(j)] +1;
+    	}
+    	return max;
+    }
+    
+    public int lengthOfLongestSubstring(String s) {
+        if(s.length()<=1) return s.length();
+        int i=0, max=1;
+        int[] map=new int[256];
+        for(int k=0; k<256; k++) map[k] = -1;
+        
+    	while(i<s.length()-1)
+    	{
+    		map[s.charAt(i)] = i;
+    		int k=i-1, j=i+1;
+    		for(;k>=0 && (map[s.charAt(k)] < k || map[s.charAt(k)] > i||map[s.charAt(k)]==k) ; k--){
+    			map[s.charAt(k)] = k;
+    		}
+
+    		//k=k+2;
+    		for(;j<s.length() && (map[s.charAt(j)] < k+1 || map[s.charAt(j)] > j ||map[s.charAt(j)]==j); j++){
+    			map[s.charAt(j)] = j;
+    		}
+    		
+    		max	= Math.max(max, j-(k+1));
+    		i=j;
+    	}
+    	return max;
+    }
 }

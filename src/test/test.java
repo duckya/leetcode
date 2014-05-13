@@ -4,15 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class test {
 
 	public static void main (String args[]) {
-		int A[] = {1,1};
-		int B[] = {1,2};
-		
+		char A[][] = {{'X', 'O', 'X', 'X'},{'O', 'X', 'O', 'X'}, {'X', 'O', 'X', 'O'}, {'O', 'X', 'O', 'X'}};
+		int B[] = {1,2, 3};
+		HashSet<String> dict = new HashSet<String>();
+		dict.add("hot"); 
+		dict.add("cog"); 
+		dict.add("dog"); 
+		dict.add("tot"); 
+		dict.add("hog"); 
+		dict.add("hop"); 
+		dict.add("pot"); 
+		dict.add("dot"); 
+
 		test testA =new test();
-		testA.subsetsWithDup(A);
+		testA.solve(A);
 		System.out.println();
 	}
 
@@ -1218,5 +1228,392 @@ public class test {
     	return res;
     }
 
+    public double pow(double x, int n) {
+        if(n==0) return 1;
+        if(n==1) return x;
+        if(n==-1) return 1/x;
+        
+        double res = pow(x, n/2);
+    	return res * res * pow(x, n-(n/2)*2);
+    }
+    
+    public int sqrt(int x) {
+    	if(x<=1) return x;
+    	int l=1, r=x/2, mid, res=0;
+    	
+    	while(l<=r)
+    	{
+    		mid = (l+r)/2;
+    		if(x/mid == mid)
+    			return mid;
+    		else if(x/mid < mid)
+    			r=mid-1;
+    		else{
+    			l=mid+1;
+    			res = mid;
+    		}
+    	}
+
+    	return res;
+    }
+    
+    public boolean canJump(int[] A) {
+    	if(A.length<=1) return true;
+    	int reach = 1;
+        for(int i=0; i<A.length-1; i++)
+        {
+        	reach = Math.max(reach-1, A[i]);
+        	if(reach<=0) return false;
+        }
+        
+        return reach >=0;
+    	
+    }
+    
+    public int jump(int[] A) {
+    	if(A.length<=1) return 0;
+    	int left = 1;
+    	int end =  A[0];
+    	int step = 1; 
+        while(end<A.length)
+        {
+        	int max = 0;
+        	int i = left;
+        	for(i=left; i<=end; i++)
+        	{
+        		if(i>=A.length-1) return step;
+        		max = Math.max(max, i+A[i]);
+        	}
+        	step++;
+        	left = i;
+        	end = max;
+        }
+        	
+        
+        return step;
+    }
+    
+    public int maxProfit1(int[] prices) {
+        if(prices.length<=1) return 0;
+    	
+        int min=prices[0];
+        int gap = 0;
+        
+        for(int i=1; i<prices.length; i++)
+        {
+        	min = Math.min(min, prices[i]);
+        	gap = Math.max(gap, prices[i]-min);
+        }
+        
+        return gap;
+    }
+    
+    public int maxProfit2(int[] prices) {
+        if(prices.length<=1) return 0;
+    	
+        int min=prices[0];
+        int gap = 0;
+        
+        for(int i=1; i<prices.length; i++)
+        {
+        	if(prices[i]<prices[i-1])
+        		min = Math.min(min, prices[i]);
+        	else
+        		gap += prices[i]-prices[i-1];
+        }
+        
+        return gap;
+    }
+    
+    public int maxProfit(int[] prices) {
+        int sum = 0;
+    	for(int i=1; i<prices.length-1; i++)
+    	{
+    		int[] left = Arrays.copyOfRange(prices, 0, i);
+    		int[] right = Arrays.copyOfRange(prices, i, prices.length);
+    		sum = Math.max(sum, maxProfit1(left)+ maxProfit1(right));
+    	}
+    	return sum;
+    }
+    
+    public int maxArea(int[] height) {
+    	if(height.length<=1) return 0;
+    	
+    	int left = 0;
+    	int right = height.length-1;
+    	int max = 0;
+    	while(left<right)
+    	{
+    		int t = Math.min(height[left], height[right]);
+    		max = Math.max(max, t*(right-left));
+    		if(height[left] <= height[right]) 
+    			left++;
+    		else
+    			right--;
+    	}
+    	return max;
+        
+    }
+    
+    public int ladderLength(String start, String end, HashSet<String> dict) {
+    	 
+        if (dict.size() == 0)  
+            return 0; 
+ 
+        LinkedList<String> wordQueue = new LinkedList<String>();
+        LinkedList<Integer> distanceQueue = new LinkedList<Integer>();
+ 
+        wordQueue.add(start);
+        distanceQueue.add(1);
+ 
+ 
+        while(!wordQueue.isEmpty()){
+            String currWord = wordQueue.pop();
+            Integer currDistance = distanceQueue.pop();
+ 
+            if(currWord.equals(end)){
+                return currDistance;
+            }
+ 
+            for(int i=0; i<currWord.length(); i++){
+                char[] currCharArr = currWord.toCharArray();
+                for(char c='a'; c<='z'; c++){
+                    currCharArr[i] = c;
+ 
+                    String newWord = new String(currCharArr);
+                    if(newWord == end) return currDistance+1;
+                    if(dict.contains(newWord)){
+                        wordQueue.add(newWord);
+                        distanceQueue.add(currDistance+1);
+                        dict.remove(newWord);
+                    }
+                }
+            }
+        }
+ 
+        return 0;
+    }
+    
+    public ArrayList<ArrayList<String>> findLaddersETL(String start, String end, HashSet<String> dict) {
+    	ArrayList<ArrayList<String>> res = new ArrayList<ArrayList<String>>();
+    	HashMap<String, ArrayList<ArrayList<String>>> path = new HashMap<String, ArrayList<ArrayList<String>>>();
+    	HashSet<String> used = new HashSet<String>();
+    	if(dict.size() ==0 || start==end) return res;
+    	
+    	ArrayList<String> word = new ArrayList<String>();
+    	word.add(start);
+    	ArrayList<Integer> step = new ArrayList<Integer>();
+    	step.add(0);
+    	
+    	ArrayList<String> pathSteps = new ArrayList<String>();
+    	pathSteps.add(start);
+    	ArrayList<ArrayList<String>> pathList = new ArrayList<ArrayList<String>>();
+    	pathList.add(pathSteps);
+    	path.put(start, pathList);
+    	
+    	int minStep = -1;
+    	int level = 0;
+    	
+    	while(word.size()>0)
+    	{
+    		String currentWord = word.get(0);
+    		word.remove(0);
+    		
+    		Integer currentStep = step.get(0);
+    		step.remove(0);
+    		if(currentStep>level)
+    		{
+    			level = currentStep;
+    			dict.removeAll(used);
+    		}
+    		
+   		 	if(currentStep+1>minStep && minStep >0) break;
+    		for(int i=0; i<currentWord.length(); i++)
+    		{
+    			for(char c='a'; c<='z'; c++)
+    			{
+    				char[] wordArray = currentWord.toCharArray();
+    				if(c==wordArray[i]) continue; 
+    				wordArray[i] = c;
+    				
+    				
+    				String newword =new String(wordArray);
+    				if(newword.equals(end))
+    				{
+    					minStep = currentStep+1;  
+    				}
+    				if(dict.contains(newword)  || newword.equals(end))
+    				{
+    					word.add(newword);
+    					step.add(currentStep+1);
+    					used.add(newword);
+    					
+    					
+    					ArrayList<ArrayList<String>> oldList = path.get(currentWord);
+    					ArrayList<ArrayList<String>> newlist = new ArrayList<ArrayList<String>>();
+    					if(path.containsKey(newword))
+    					{
+    						newlist = path.get(newword);
+    					}	
+    					
+    					for(ArrayList<String> steps:oldList)
+    					{
+    						ArrayList<String> newSteps = new ArrayList<String>();
+    						newSteps.addAll(steps);
+    						newSteps.add(newword);
+    						newlist.add(newSteps);
+    					}
+    					if(!path.containsKey(newword))
+    						path.put(newword, newlist);
+    					
+    				}
+    			}
+    		}
+    		
+    		
+    	}
+    	if(path.containsKey(end)) res = path.get(end);
+    	
+    	return res;
+    	
+    }
+    
+    public ArrayList<ArrayList<String>> findLadders(String start, String end, HashSet<String> dict) {
+        HashMap<String, HashSet<String>> visited = new HashMap<String, HashSet<String>>();
+        HashMap<String, Integer> level = new HashMap<String, Integer>();
+        LinkedList<String> queue = new LinkedList<String>();
+        ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+
+        if(start == null || end == null || start.length()!=end.length()) return result;
+
+        HashSet<String> path = new HashSet<String>();
+        int minLen = Integer.MAX_VALUE;
+        visited.put(start, path);//only difference from word ladder I
+        level.put(start, 1);
+        queue.add(start);
+
+        while(!queue.isEmpty()){
+        	String head = queue.remove();
+        	char[] chars = head.toCharArray();
+        	for(int i = 0; i < head.length(); i++){
+        		char old = chars[i];
+        		for(char letter = 'a'; letter <= 'z'; letter++){
+        			chars[i] = letter;
+        			String nextWord = new String(chars);
+					//two possible situations
+					//level does not contain nextWord
+					//level contains nextWord and near the start
+        			if(dict.contains(nextWord) && (!level.containsKey(nextWord)
+        				|| (level.containsKey(nextWord) && level.get(nextWord) > level.get(head)))){
+        					//we update the path, visited, level
+        				if(visited.containsKey(nextWord)){
+        					visited.get(nextWord).add(head);
+        				}else{
+        					path = new HashSet<String>();
+        					path.add(head);
+        					visited.put(nextWord, path);
+        					level.put(nextWord, level.get(head) + 1);
+        					queue.add(nextWord);
+        				}
+        			}
+
+        			if(nextWord.equals(end)){
+        				if(level.get(head) < minLen){
+        					ArrayList<String> entry = new ArrayList<String>();
+        					entry.add(end);
+        					result.addAll(backtrace(head,visited,entry));
+        					minLen = level.get(head)+1;
+        				}else{
+        					break;
+        				}
+        			}
+        			chars[i] = old;
+
+        		}
+        	}
+        }
+        return result;
+	}
+	
+	private ArrayList<ArrayList<String>> backtrace(String end,
+		HashMap<String, HashSet<String>> visited, ArrayList<String> path) {
+		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+		ArrayList<String> entry = new ArrayList<String>(path);
+		entry.add(0,end);
+		if(visited.get(end).size()<1){
+			result.add(entry);
+			return result;
+		}
+		
+		for(String str : visited.get(end)){
+			result.addAll(backtrace(str,visited,entry));
+		}
+		return result;
+	}
+	
+    public void solve(char[][] board) {
+    	
+    	if(board.length==0 || board[0].length==0) return;
+    	
+        int length  = board.length; 
+        int width = board[0].length;
+        ArrayList<Integer> Iindexes =new ArrayList<Integer>();
+        ArrayList<Integer> Jindexes =new ArrayList<Integer>();
+        
+    	for(int i=0; i<length; i++) 
+    	{
+    		for(int j=0; j<width; j++) 
+    		{
+    			if(board[i][j] == 'O' && (i==0||i==length-1||j==0||j==width-1))
+    			{
+    				Iindexes.add(i);
+    				Jindexes.add(j);
+    				
+    			}else
+    				continue;
+    		}
+       	}
+
+    	while(!Iindexes.isEmpty())
+		{
+			int x = Iindexes.get(0);
+			int y = Jindexes.get(0);
+			Iindexes.remove(0);
+			Jindexes.remove(0);
+			board[x][y] = 'p';
+			if(x>0 && board[x-1][y] == 'O') 
+			{
+				Iindexes.add(x-1);
+				Jindexes.add(y);
+			}
+			if(x<length-1 && board[x+1][y] == 'O') 
+			{
+				Iindexes.add(x+1);
+				Jindexes.add(y);
+			}
+			if(y>0 && board[x][y-1] == 'O') 
+			{
+				Iindexes.add(x);
+				Jindexes.add(y-1);
+			}
+			if(y<width-1 && board[x][y+1] == 'O') 
+			{
+				Iindexes.add(x);
+				Jindexes.add(y+1);
+			}
+		}
+    	 
+    	for(int i=0; i<length; i++) 
+    	{
+    		for(int j=0; j<width; j++) 
+    		{
+    			if(board[i][j] =='o'|| board[i][j] == 'O')board[i][j] = 'X';
+    			if(board[i][j] =='p')board[i][j] = 'O';	
+    		}
+    	}
+    	
+    }
+    
+    
 }
 
