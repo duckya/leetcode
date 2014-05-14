@@ -10,11 +10,18 @@ public class stringtest {
 	
 	public static void main (String args[]) {
 		int a = 20;
-		int B[] = {1,2};
-		String t = "wlrbbmqbhcdarzowkkyhiddqscdxrjmowfrxsjybldbefsarcbynecdyggxxpklorellnmpapqfwkhopkmco";
+		String B[] = {"CAA","AAA","BCD"};
+		char[][] board = new char[3][3];
+		for(int i=0; i<3; i++)
+		{
+			String b= B[i];
+			char[] t = b.toCharArray(); 
+			board[i] = t;
+		}
+		String t = "0000";
 		stringtest testA =new stringtest();
 		//testA.longestPalindrome(t);
-		System.out.println(testA.lengthOfLongestSubstring(t));
+		testA.exist(board, "AAB");
 	}
 	
     public String reverseWords(String s) {
@@ -586,4 +593,530 @@ public class stringtest {
     	}
     	return max;
     }
+    
+    public ArrayList<ArrayList<String>> partition(String s) {
+    	ArrayList<ArrayList<String>> res = new ArrayList<ArrayList<String>>();
+    	ArrayList<String> path =new ArrayList<String>();
+    	
+    	dfs(s, path, 0, res);
+    
+    	return res;  	
+    }
+    
+    private void dfs(String s, ArrayList<String> path, int start, ArrayList<ArrayList<String>> res)
+    {
+    	if(start==s.length())
+    	{
+    		
+    		ArrayList<String> newpath = new ArrayList<String>();
+    		newpath.addAll(path);	
+    		res.add(newpath);
+    		return;
+    	}
+    	
+		for(int j=start; j<s.length(); j++)
+		{
+			if(isPalindrome(s, start, j))
+			{
+				path.add(s.substring(start, j+1));
+				dfs(s, path, j+1, res);
+				path.remove(path.size()-1);
+			}
+		}
+    }
+    
+    private boolean isPalindrome(String s, int start, int end) {
+    	char[] inputs = s.toCharArray();
+    	while(start<end)
+    	{
+    		if(Character.toUpperCase(inputs[start])==Character.toUpperCase(inputs[end]))
+    		{
+    			start++; 
+    			end--;
+    		}
+    		else
+    			return false;
+    	}
+    	
+        return true;
+    }
+    
+    public int uniquePaths1(int m, int n) {
+    	int[][] steps = new int[m][n];
+    	steps[0][0] = 0; 
+    	for(int i =0; i<m; i++) steps[i][0] =1;
+    	for(int i =0; i<n; i++) steps[0][i] =1;
+    	
+    	if(m==1 || n==1) return steps[m-1][n-1];
+    	
+    	int total = getStep(m-1, n-1, steps);
+    	return total;
+    }
+    private int getStep(int m, int n, int[][] steps)
+    {
+    	int path1, path2;
+    	if(steps[m-1][n]>0) 
+    		path1 =steps[m-1][n];
+    	else
+    		path1 = getStep(m-1, n, steps);
+    	
+    	if(steps[m][n-1]>0) 
+    		path2 =steps[m][n-1];
+    	else
+    		path2 = getStep(m, n-1, steps);
+    	
+    	steps[m][n] = path1 + path2;
+    	return steps[m][n];
+    }
+    
+    public int uniquePaths(int m, int n) {
+    	int[][] steps = new int[m][n];
+    	steps[0][0] = 0; 
+    	for(int i =0; i<m; i++) steps[i][0] =1;
+    	for(int i =0; i<n; i++) steps[0][i] =1;
+    	
+    	for(int i=1; i<m; i++)
+    	{
+    		for(int j=1; j<n; j++)
+    		{
+    			steps[i][j] = steps[i-1][j] + steps[i][j-1];
+    		}
+    	}
+
+    	return steps[m-1][n-1];
+    }
+    
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+    	int m = obstacleGrid.length, n=obstacleGrid[0].length;
+    	int[][] steps = new int[m][n];
+    	steps[0][0] = (obstacleGrid[0][0]==0?1:0); 
+
+    	for(int i =1; i<m; i++) 
+    		steps[i][0] =(obstacleGrid[i][0]==1? 0:steps[i-1][0]);
+
+    	
+    	for(int i =1; i<n; i++) 
+    		steps[0][i] =(obstacleGrid[0][i]==1? 0:steps[0][i-1]);
+
+    	
+    	for(int i=1; i<m; i++)
+    	{
+    		for(int j=1; j<n; j++)
+    		{
+    			if(obstacleGrid[i][j]==1) 
+    				steps[i][j] = 0;
+    			else
+   					steps[i][j] = steps[i-1][j] + steps[i][j-1];
+    		}
+    	}
+    	return steps[m-1][n-1];
+    	
+    }
+    
+    public ArrayList<String[]> solveNQueensTLE(int n) {
+    	ArrayList<String[]> res = new ArrayList<String[]>();
+    	int[][] board=new int[n][n];
+    	int currentcolumn = 0;
+    	solveTLE(currentcolumn, n, board, res);
+    	return res;
+    }
+     private void solveTLE(int currentcolumn, int size, int[][] board, ArrayList<String[]> res)
+     {
+    	 if(currentcolumn == size)
+    	 {
+    		 String[] solution =new  String[size];
+    		 String row="";
+    		 for(int i=0; i<size; i++)
+    		 {
+    			 row = "";
+    			 for(int j=0; j<size; j++)
+    			 {
+    				 row += (board[i][j] >0? String.valueOf(board[i][j]):".");
+    			 }
+    			 solution[i] = row;
+    		 }
+    		 res.add(solution);
+    		 return;
+    	 }
+         for(int i=0; i<size; i++)
+         {
+         	if(validPlaceTLE(currentcolumn, i, board))
+         	{
+         		
+         		board[i][currentcolumn] =1;
+         		currentcolumn++; 
+         		solveTLE(currentcolumn, size, board, res);
+         		currentcolumn--;
+         		board[i][currentcolumn] =0;
+         	}
+         }
+     }
+     
+     private boolean validPlaceTLE(int column, int row, int[][] board)
+     {
+    	 int sum = 0;
+    	 for(int i=0; i<board.length; i++)
+    		 sum += board[row][i];
+    	 if(sum>0) return false;
+    	 
+    	 for(int i=0; i<board.length; i++)
+    		 sum += board[i][column];
+    	 if(sum>0) return false; 
+    	 
+    	 for(int i=0; i<board.length; i++)
+    		 sum += board[i][i];
+    	 if(sum>0) return false; 
+    	 
+    	 return true;
+    	 
+     }
+     
+     public ArrayList<String[]> solveNQueens(int n) {
+     	ArrayList<String[]> res = new ArrayList<String[]>();
+     	HashSet<Integer> cols = new HashSet<Integer>();
+     	HashSet<Integer> diag1 = new HashSet<Integer>();
+     	HashSet<Integer> diag2 = new HashSet<Integer>();
+     	int[] board = new int[n];
+     	
+     	int currentrow = 0;
+     	solve(currentrow, n, board, res, cols, diag1, diag2);
+     	return res;
+     }
+      private void solve(int currentrow, int size, int[] board, ArrayList<String[]> res, HashSet<Integer> cols, HashSet<Integer> diag1, HashSet<Integer> diag2)
+      {
+     	 if(currentrow == size)
+     	 {
+     		 String[] solution =new  String[size];
+	      		 
+			 for(int i=0; i<size; i++)
+     		 {
+	     		 char[] chars = new char[size];
+				 Arrays.fill(chars, '.');
+				 chars[board[i]] = 'Q';
+				 String row = new String(chars);
+     			 solution[i] = row;
+     		 }
+     		 res.add(solution);
+     		 return;
+     	 }
+          for(int i=0; i<size; i++)
+          {
+          	if(validPlace(currentrow, i, cols, diag1, diag2))
+          	{
+          		
+          		board[currentrow] =i;
+          		cols.add(i);
+          		diag1.add(i+currentrow);
+          		diag2.add(i-currentrow);
+          		currentrow++; 
+          		solve(currentrow, size, board, res, cols, diag1, diag2);
+          		currentrow--;
+          		cols.remove(i);
+          		diag1.remove(i+currentrow);
+          		diag2.remove(i-currentrow);
+          		board[currentrow] =0;
+          	}
+          }
+      }
+      
+      private boolean validPlace(int row, int col,  HashSet<Integer> cols, HashSet<Integer> diag1, HashSet<Integer> diag2)
+      {
+     	 
+     	  if(cols.contains(col) || diag1.contains(row+col)||diag2.contains(col-row))
+     		  return false;
+     	 return true;	 
+      }
+      
+      public int totalNQueens(int n) {
+       	
+       	HashSet<Integer> cols = new HashSet<Integer>();
+       	HashSet<Integer> diag1 = new HashSet<Integer>();
+       	HashSet<Integer> diag2 = new HashSet<Integer>();
+       	int[] board = new int[n];
+       	
+       	int currentrow = 0;
+       	int total = solvetotal(currentrow, n, board, cols, diag1, diag2, 0);
+       	return total;
+      }
+      
+      private int solvetotal(int currentrow, int size, int[] board, HashSet<Integer> cols, HashSet<Integer> diag1, HashSet<Integer> diag2, int total)
+      {
+     	 if(currentrow == size)
+     	 {
+     		   total ++;
+     		   return total;
+     	 }
+         for(int i=0; i<size; i++)
+         {
+          	if(!(cols.contains(i) || diag1.contains(currentrow+i)||diag2.contains(i-currentrow)))
+          	{
+          		
+          		board[currentrow] =i;
+          		cols.add(i);
+          		diag1.add(i+currentrow);
+          		diag2.add(i-currentrow);
+          		currentrow++; 
+          		total = solvetotal(currentrow, size, board, cols, diag1, diag2, total);
+          		currentrow--;
+          		cols.remove(i);
+          		diag1.remove(i+currentrow);
+          		diag2.remove(i-currentrow);
+          		board[currentrow] =0;
+          	}
+          }
+          return total;
+      }
+
+      
+      public ArrayList<String> restoreIpAddresses(String s) {
+    	  ArrayList<String> res = new ArrayList<String>();
+    	  int part = 0; 
+    	  dfs(s, res, 0, "", part);
+    	  return res;
+      }
+      
+      private void dfs(String s, ArrayList<String> res, int start, String IP, int part)
+      {
+    	  if(start == s.length()  && part ==4)
+    	  {
+    		  
+    		  res.add(IP);
+    		  return; 
+    	  }
+    	  if(part>=4) return;
+    	  for(int i=start; i<s.length() && i< start+3; i++)
+    	  {
+    		  String t = s.substring(start, i+1);
+    		  if(Integer.parseInt(t)<=255 && part<4 && (!t.startsWith("0") ||t.equals("0")))
+    		  {
+    			  int old = start;
+    			  String oldIP = IP;
+    			  if(IP == "") 
+    				  IP = t;
+    			  else
+    				  IP+="."+t;
+    			  part++; 
+    			  start = i+1;
+    			  dfs(s, res, start, IP, part);
+    			  start = old; 
+    			  IP = oldIP;
+    			  part--;
+    			  
+    		  }
+    	  }
+      }
+      
+      public ArrayList<ArrayList<Integer>> combinationSum(int[] candidates, int target) {
+    	  ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	  ArrayList<Integer> path = new ArrayList<Integer>();
+    	  Arrays.sort(candidates);
+    	  dfs(res, candidates, target, path, 0);
+    	  return res;
+    	  
+      }
+      private void dfs(ArrayList<ArrayList<Integer>> res, int[] candidates, int target, ArrayList<Integer> path, int start)
+      {
+    	  if(target == 0)
+    	  {
+    		  ArrayList<Integer> p = new ArrayList<Integer>();
+    		  p.addAll(path); 
+    		  res.add(p);
+    		  return; 
+    	  }
+    	  int i =start; 
+    	  while(i<candidates.length && candidates[i]<=target)
+    	  {
+    		  path.add(candidates[i]);
+    		  dfs(res, candidates, target - candidates[i], path, i);
+    		  path.remove(path.size()-1); 
+    		  i++;
+    	  }
+      }
+      
+      public ArrayList<ArrayList<Integer>> combinationSum2(int[] num, int target) {
+    	  ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	  ArrayList<Integer> path = new ArrayList<Integer>();
+    	  Arrays.sort(num);
+    	  dfs2(res, num, target, path, 0);
+    	  return res;
+      }
+      
+      private void dfs2(ArrayList<ArrayList<Integer>> res, int[] candidates, int target, ArrayList<Integer> path, int start)
+      {
+    	  if(target == 0)
+    	  {
+    		  ArrayList<Integer> p = new ArrayList<Integer>();
+    		  p.addAll(path); 
+    		  res.add(p);
+    		  return; 
+    	  }
+    	  int i =start; 
+    	  int prev = -1;
+    	  while(i<candidates.length && candidates[i]<=target)
+    	  {
+    		  if(prev == candidates[i])
+    		  {
+    			  i++;
+    			  continue;
+    		  }
+    		  prev = candidates[i]; 
+    		  path.add(candidates[i]);
+    		  dfs2(res, candidates, target - candidates[i], path, i+1);
+    		  path.remove(path.size()-1); 
+    		  i++;
+    	  }
+      }
+      
+      public ArrayList<String> generateParenthesis(int n) {
+    	  ArrayList<String> res = new ArrayList<String>();
+    	  String path = ""; 
+    	  Stack<String> st = new Stack<String>(); 
+    	  generate(res, path, 0, n, st);
+    	  return res; 
+      }
+      
+      private void generate(ArrayList<String> res, String path, int posi, int size, Stack<String> st)
+      {
+    	  if(posi == size && st.isEmpty())
+    	  {
+    		  res.add(path); 
+    		  return; 
+    	  }
+    	  
+    	  if(posi < size)
+    	  {
+	    	  st.push("(");
+	       	  generate(res, path + "(", posi+1, size, st);
+	       	  st.pop();
+    	  }
+          if(!st.empty())
+          {
+	          st.pop();
+	          generate(res, path + ")", posi, size, st);
+	          st.push("(");
+          } 
+      }
+      
+      public void solveSudoku(char[][] board) {
+          fillNumber(board, 0, 0);
+      }
+      
+      private boolean fillNumber(char[][] board, int row, int col)
+      {
+    	  int size = board.length; 
+    	  
+    	  
+   	 
+          for(int i=row; i<size; i++)
+          {
+        	  int j=col;
+        	  if(i==row+1)j=0;
+        	  
+        	  for(; j<size; j++)
+        	  {
+        		  if(board[i][j]!='.')
+        			  continue;
+        		  else
+        		  {
+        			  for(int k=1; k<10; k++)
+        			  {
+        				  if(isValidSudoku(board, i, j, k))
+        				  {
+        					  board[i][j] = String.valueOf(k).charAt(0); 
+        					  if(fillNumber(board, (j==size-1?i+1:i), (j==size-1?0:j+1))) return true;
+        					  board[i][j] = '.';
+        				  }
+        				  
+        			  }
+        			  return false;
+        		  }
+        		  
+        	  }
+          }
+          return true;
+          
+      }
+      
+      public boolean isValidSudoku(char[][] board, int row, int col, int val) 
+      {
+      	
+          for(int i=0; i<9; i++)
+          {
+        	  if(Character.getNumericValue(board[row][i])==val) return false;
+          }
+          
+          for(int i=0; i<9; i++)
+          {
+        	  if(Character.getNumericValue(board[i][col])==val) return false;
+          }
+
+          int x= row/3;
+          int y = col/3;
+          
+          for(int i=0; i<3; i++)
+          {
+          	for(int j=0; j<3; j++)
+          	{
+          		if(Character.getNumericValue(board[i+x*3][j+y*3])==val) return false;
+          	}
+          }
+      			
+
+          return true; 
+      }
+
+      public boolean exist(char[][] board, String word) {
+    	  boolean[][] visited = new boolean[board.length][board[0].length];
+    	  
+          for(int i=0; i<board.length; i++)
+          {
+        	  for(int j=0; j<board[0].length; j++)
+        	  {
+        		  if(board[i][j] == word.charAt(0))
+        		  {
+        			  visited[i][j] = true;
+        			  if(check(board, visited, i, j, word, 1)) return true;
+        			  visited[i][j] = false;
+        		  }
+        	  }
+          }
+          return false;
+      }
+      
+      private boolean check(char[][] board, boolean[][] visited, int row, int col, String word, int pos)
+      {
+    	  if(pos==word.length()) return true;
+    	  
+    	  if(row>0 && !visited[row-1][col] && board[row-1][col] == word.charAt(pos))
+    	  {
+    		  visited[row-1][col] = true;
+    		  if(check(board, visited, row-1, col, word, pos+1)) return true;
+    		  visited[row-1][col] = false;
+    	  }
+    	  
+    	  if(row<board.length-1 && !visited[row+1][col] && board[row+1][col] == word.charAt(pos))
+    	  {
+    		  visited[row+1][col] = true;
+    		  if(check(board, visited, row+1, col, word, pos+1)) return true;
+    		  visited[row+1][col] = false;
+    	  }
+    	  
+    	  if(col>0 && !visited[row][col-1] && board[row][col-1] == word.charAt(pos))
+    	  {
+    		  visited[row][col-1] = true;
+    		  if( check(board, visited, row, col-1, word, pos+1)) return true;
+    		  visited[row][col-1] = false;
+    	  }
+    	  
+    	  if(col<board[0].length-1 && !visited[row][col+1] && board[row][col+1] == word.charAt(pos))
+    	  {
+    		  visited[row][col+1] = true;
+    		  if(check(board, visited, row, col+1, word, pos+1)) return true;
+    		  visited[row][col+1] = false;
+    	  }
+    	  
+    	  return false;
+    		  
+      }
+
 }
