@@ -9,8 +9,8 @@ import java.util.LinkedList;
 public class test {
 
 	public static void main (String args[]) {
-		char A[][] = {{'X', 'O', 'X', 'X'},{'O', 'X', 'O', 'X'}, {'X', 'O', 'X', 'O'}, {'O', 'X', 'O', 'X'}};
-		int B[] = {1,2, 3};
+		int A[][] = {{1,2,3},{8,1,4}, {7,6,5}};
+		int B[] = {1,2};
 		HashSet<String> dict = new HashSet<String>();
 		dict.add("hot"); 
 		dict.add("cog"); 
@@ -20,12 +20,28 @@ public class test {
 		dict.add("hop"); 
 		dict.add("pot"); 
 		dict.add("dot"); 
-
+		ArrayList<ArrayList<Integer>> triangle = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		a.add(1);
+		triangle.add(a);
+		
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		b.add(2);
+		b.add(3);
+		triangle.add(b);
+		
 		test testA =new test();
-		testA.solve(A);
+		testA.numDecodings("10");
 		System.out.println();
 	}
 
+	 public class Interval {
+		      int start;
+		    int end;
+		     Interval() { start = 0; end = 0; }
+		     Interval(int s, int e) { start = s; end = e; }
+	 }
+	
 	public double findMedianSortedArrays(int A[], int B[]) {
 	    int a = A.length;
 	    int b = B.length;
@@ -1614,7 +1630,329 @@ public class test {
     	
     }
     
+    public int minimumTotal(ArrayList<ArrayList<Integer>> triangle) {
+    	   	
+    	if(triangle.size() ==0) return 0;
+    	int[] minvalues = new int[triangle.size()];
+    	int min = Integer.MAX_VALUE;
+    	for(int row =0; row<triangle.size(); row ++)
+    	{
+	    	for(int index = triangle.get(row).size()-1; index >=0; index--)
+	    	{
+	    		int res = getMin(row, index, triangle, minvalues);
+	    		if(row==triangle.size()-1)
+	    		{
+	    			min = Math.min(min, res);
+	    		}
+	    		
+	    	}
+    	}
+    	return min;
+    }
     
+    private int getMin(int row, int index, ArrayList<ArrayList<Integer>> triangle, int[] minvalues)
+    {
+    	
+    	int val = triangle.get(row).get(index);
+    	int minvalue = 0;
+    	if(row == 0)
+    	{
+    		minvalue = val; 
+    	}else
+    	{
+    		if(index==0)
+    		{
+    			minvalue = minvalues[index] + val; 
+    		}
+    		else if(index==triangle.get(row).size()-1)
+    		{
+    			minvalue = minvalues[index-1] + val; 
+    		}
+    		else 
+	    	{
+	    		minvalue = Math.min(val+minvalues[index], val+minvalues[index-1]);
+	    	}
+    	}
+    	
+    	minvalues[index] = minvalue;
+    	return minvalue;
+    }
     
+    public int maxSubArray(int[] A) {
+    	int[] largest = new int[A.length];
+    	largest[0] = A[0];
+    	
+    	for(int i=1; i<A.length; i++)
+    	{
+    		if(largest[i-1]<0)
+    		{
+    			largest[i] = A[i];
+    		}else
+    		{
+    			largest[i] = largest[i-1]+A[i];   			
+    		}
+    		
+    	}
+        int max = A[0];
+    	for(int i=1; i<A.length; i++)
+    	{
+    		max = Math.max(max,  largest[i]);
+    	}
+    	
+    	return max;
+    }
+    
+    public ArrayList<ArrayList<Integer>> generate(int numRows) {
+    	ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	for(int i=0; i<numRows; i++)
+    	{
+    		ArrayList<Integer> row = new ArrayList<Integer>();
+    		row.add(1);
+    		if(i>0)
+    		{
+    			ArrayList<Integer> prevrow = res.get(i-1);
+    			for(int j=1; j<prevrow.size(); j++)
+    			{
+    				row.add(prevrow.get(j-1)+prevrow.get(j));
+    			}
+    			row.add(1);
+    		}
+    		res.add(row);
+    	}
+    	
+    	return res;
+        
+    }
+    
+    public ArrayList<Integer> getRow(int rowIndex) {
+    	ArrayList<Integer> res = new ArrayList<Integer>();
+    	
+    	for(int i=0; i<rowIndex+1; i++)
+    	{
+    		res.add(0, 1);
+
+    		for(int j=1; j<res.size()-1; j++)
+    		{
+     			res.set(j, res.get(j+1)+res.get(j));
+    		}   		
+    	}  	
+    	return res;	
+    }
+    
+    public int minPathSum(int[][] grid) {
+    	int[][] sum = new int[grid.length][grid[0].length];
+    	sum[0][0] = grid[0][0];
+    	for(int i=1; i<grid.length; i++)
+    		sum[i][0] = grid[i][0] + sum[i-1][0];
+    	
+    	for(int j=1; j<grid[0].length; j++)
+    		sum[0][j] = grid[0][j] + sum[0][j-1];
+    	
+    	for(int i=1; i<grid.length; i++)
+    	{
+    		for(int j=1; j<grid[i].length; j++)
+    		{
+    			sum[i][j] = Math.min(sum[i-1][j], sum[i][j-1])+ grid[i][j];
+    			
+    		}
+    	}
+    	return sum[grid.length-1][grid[0].length-1];
+    }
+    
+    public ArrayList<Integer> spiralOrder(int[][] matrix) {
+   	 ArrayList<Integer> res = new ArrayList<Integer>();
+   	 if(matrix.length==0 || matrix[0].length==0) return res;
+   	
+   	int left = 0, top = 0; 
+       int right = matrix[0].length, bottom = matrix.length;
+      
+       while(top<bottom&&left<right)
+       {
+       	loop(matrix, res, left, top, right, bottom);
+       	left++;
+       	right--;
+       	top++;
+       	bottom--;
+       }
+       return res;
+   }
+   
+   private void loop(int[][] matrix, ArrayList<Integer> res, int left, int top, int right, int bottom)
+   {
+   	for(int j=left; j<right; j++)
+      		res.add(matrix[top][j]);
+   	for(int i=top+1; i<bottom; i++)
+      		res.add(matrix[i][right-1]);
+       
+   	for(int j=right-2; j>=left && top<bottom-1; j--)
+      		res.add(matrix[bottom-1][j]);
+   	for(int i=bottom-2; i>top && left<right-1; i--)
+      		res.add(matrix[i][left]);
+   }
+   
+   public int[][] generateMatrix(int n) {
+	   int[][] res = new int[n][n];
+	   int size = n;
+	   int startNumber = 1;
+	   int startpos = 0;
+	   while(size>0)
+	   {
+		   loop(res, startpos, size, startNumber);
+		   
+		   startNumber= startNumber+(size-1)*4;
+		   startpos++;
+		   size=size-2;
+	   }
+	   
+       return res;
+   }
+    
+   private void loop(int[][] res, int startpos, int size, int startNumber)
+   {
+	   if(size==1) 
+	   {
+		   res[startpos][startpos] = startNumber;
+		   return;
+	   }
+	   for(int j=startpos; j<startpos+size-1; j++, startNumber++)
+	   		res[startpos][j]=startNumber;
+	   
+	   for(int i=startpos; i<startpos+size-1; i++, startNumber++)
+   		   res[i][startpos+size-1]=startNumber;
+	   
+	   for(int j=startpos+size-1; j>startpos; j--, startNumber++)
+	   		res[startpos+size-1][j]=startNumber;
+	   
+	   for(int i=startpos+size-1; i>startpos; i--, startNumber++)
+   		   res[i][startpos]=startNumber;
+   }
+   
+   public ArrayList<Interval> insert(ArrayList<Interval> intervals, Interval newInterval) {
+	   if(intervals.size() == 0)
+	   {
+		   intervals.add(newInterval);
+		   return intervals;
+	   }
+	   boolean bMerged = false;
+	   
+	   for(int i=0; i<intervals.size(); i++){
+		   if(!bMerged && intervals.get(i).end<newInterval.start)
+		   {
+			   if(i==intervals.size()-1) intervals.add(newInterval);
+			   continue;
+		   }
+		   if(intervals.get(i).start>newInterval.end)
+		   {
+			   if(!bMerged) intervals.add(i, newInterval);
+			   break;
+		   }
+		   if(bMerged)
+		   {
+			   intervals.get(i-1).end = Math.max(newInterval.end, intervals.get(i).end);
+			   intervals.remove(i);
+			   i--;
+		   }
+		   if(!bMerged && intervals.get(i).end>=newInterval.start)
+		   {
+			   intervals.get(i).end = Math.max(newInterval.end, intervals.get(i).end);
+			   bMerged = true;
+		   }
+		   if(intervals.get(i).start<=newInterval.end)
+		   {
+			   intervals.get(i).start = Math.min(newInterval.start, intervals.get(i).start);
+			   bMerged = true;
+		   }
+
+			   
+	   }
+	   return intervals;
+   }
+   
+   public ArrayList<Interval> merge(ArrayList<Interval> intervals) {
+	   if(intervals.size() <=1) return intervals;
+	   ArrayList<Interval> res =new ArrayList<Interval>();
+	   res.add(intervals.get(0));
+       for(int i=0; i<intervals.size(); i++)
+       {
+    	   res = insert(res, intervals.get(i));
+       }
+       return res;
+   }
+   
+   public int minDistance(String word1, String word2) {
+	   
+	   if(Math.min(word1.length(), word2.length()) ==0 ) return Math.max(word1.length(), word2.length());
+	   
+       int[][] min1 = new int[word1.length()][word2.length()];
+       
+       return getMin(word1, word2, min1, 0, 0);
+   }
+   
+   private int getMin(String word1, String word2, int[][] min1, int index1, int index2) {
+       if(index1==word1.length()) 
+       {   
+    	   for(int j=index2; j<word2.length(); j++) 
+    		   min1[index1][j] = word2.substring(index2+1).length();
+    	   return word2.substring(index2).length();
+       }else if(index2==word2.length()) 
+       {   
+    	   for(int j=index1; j<word1.length(); j++) 
+    		   min1[j][index2] = word1.substring(index1+1).length();
+    	   return word1.substring(index1).length();
+       }
+       
+       int first = 0;
+       if(min1[index1+1][index2+1]>0) 
+    	   first = min1[index1+1][index2+1];
+       else
+    	   first = getMin(word1, word2, min1, index1+1, index2+1);
+       
+       int sec = 0;
+       if(min1[index1+1][index2]>0) 
+    	   sec = min1[index1+1][index2];
+       else
+    	   sec = getMin(word1, word2, min1, index1+1, index2);
+       
+       int third = 0;
+       if(min1[index1][index2+1]>0) 
+    	   third = min1[index1][index2+1];
+       else
+    	   third = getMin(word1, word2, min1, index1, index2+1);
+       
+       int sum = Math.min(third, Math.min(first, sec))+1;
+       min1[index1][index2] = sum;
+       
+       return sum;
+   }
+   
+    
+   public int numDecodings(String s) {
+	   if(s.length() == 0) return 0;
+	   int[] num = new int[s.length()];
+	 
+	   if(s.charAt(0)>'0') 
+		   num[0]=1;
+	   else 
+		   num[0]=0;
+	   
+	   for(int i=1; i<s.length(); i++)
+	   {
+		   int path1 = 0, path2=0;
+		   
+		   if(s.charAt(i)>'0') path1 = num[i-1];
+		   
+		   if((s.charAt(i)<='6' && s.charAt(i-1)=='2' ) || s.charAt(i-1)=='1')
+		   {
+		       if(i==1)
+		        path2 = 1;
+		       else
+			    path2 = num[i-2];
+		   }
+		   num[i] = path1+path2;
+	   }
+       
+	   return num[s.length()-1];
+   }
+
 }
 
