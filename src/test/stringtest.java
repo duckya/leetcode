@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Set;
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,18 +11,17 @@ public class stringtest {
 	
 	public static void main (String args[]) {
 		int a = 20;
-		String B[] = {"CAA","AAA","BCD"};
+		Set<String> B = new HashSet<String>(); 
+		B.add("dog");
+		B.add("s");
+		B.add("gs");
+
 		char[][] board = new char[3][3];
-		for(int i=0; i<3; i++)
-		{
-			String b= B[i];
-			char[] t = b.toCharArray(); 
-			board[i] = t;
-		}
-		String t = "0000";
+
+		String t = "barfoothefoobarman"; 
 		stringtest testA =new stringtest();
 		//testA.longestPalindrome(t);
-		testA.exist(board, "AAB");
+		testA.wordBreak("dogs", B);
 	}
 	
     public String reverseWords(String s) {
@@ -1119,6 +1119,253 @@ public class stringtest {
     		  
       }
 
+      public String minWindow(String S, String T) {
+          if(T.length() == 0) return "";
+    	  int lastBeginIndex = -1;
+    	  String res = "";
+    	  for(int i=0,j=0; i<S.length(); i++)
+    	  {
+    		  if(S.charAt(i) == T.charAt(j))
+    		  {
+    			  j++;
+    			  if(j==1)lastBeginIndex = i;
+    				  
+    			  if(j==T.length())
+    			  {
+    				  
+    				  j=0;
+    				  String sub = S.substring(lastBeginIndex, i+1);
+    				  res = sub.length() < res.length() || res.length()==0 ? sub:res;
+    			  }
+    		  }
+    	  }
+          
+    	  return res;
+      }
       
+      public String multiply(String num1, String num2) {
+          if(num1.equals("0") || num2.equals("0")) return "0";
+          
+          String res = "";
+          String midres = "";
+    	  int carryOver = 0;
+    	  
+    	  char[] n1 = num1.toCharArray();
+    	  char[] n2 = num2.toCharArray();
+    	  
+    	  for(int i=n1.length-1; i>=0; i--)
+    	  {
+    		  carryOver = 0;
+    		  midres = "";
+    		  for(int j=n2.length-1; j>=0; j--)
+    		  {
+    			  int l1 = n1[i] - '0';
+    			  int l2 = n2[j] - '0';
+    			  
+    			  int r = l1*l2+carryOver;
+    			  int val = r%10;
+    			  carryOver = r/10;
+    			  
+    			  midres =String.valueOf(val) +  midres;
+    			  
+    		  }
+    		  
+    		  if(carryOver>0)midres = String.valueOf(carryOver) +  midres;
+    		  
+    		  for(int k=i; k<n1.length-1; k++)
+    		  {
+    			  midres = midres + "0";
+    		  }
+    		  res = addString(res, midres);	  
+    	  }
+    	  
+    	  return res;
+      }
       
+      public String addString(String num1, String num2) {
+                    
+          String res = "";
+          int carryOver = 0;
+    	  
+    	  char[] n1 = num1.toCharArray();
+    	  char[] n2 = num2.toCharArray();
+    	  
+    	  for(int i=n1.length-1, j=n2.length-1; i>=0 || j>=0; i--, j--)
+    	  {	    		 
+    			  int l1 = i<0? 0 : n1[i] - '0';
+    			  int l2 = j<0? 0 : n2[j] - '0';
+    			  
+    			  int r = l1+l2+carryOver;
+    			  int val = r%10;
+    			  carryOver = r/10;
+    			  
+    			  res = String.valueOf(val) + res;  
+    	  }
+    	  
+		  if(carryOver>0)res = String.valueOf(carryOver) + res;
+		  
+
+    	  
+    	  return res;
+      }
+      
+      public ArrayList<Integer> findSubstring(String S, String[] L) {
+    	  ArrayList<Integer> res = new ArrayList<Integer>();
+    	  ArrayList<String> source = new ArrayList<String>();
+    	  boolean[] bUsed = new boolean[L.length];
+    	  int count = 0;
+    	  int size = L[0].length();
+    	  for(int i=0; i<S.length()-size; i=i+size)
+    	  {
+    		  source.add(S.substring(i, i+size)); 
+    	  }
+    	  
+    	  for(int i = 0; i<source.size(); i++)
+    	  {
+    		  for(int j =0; j<L.length; j++)
+    		  {
+    			  if(source.get(i).equals(L[j]))
+    			  {
+    				  if( bUsed[j] == false)
+    				  {
+    					  count++;
+    					  bUsed[j] = true;
+    					  
+    					  if(count ==L.length)
+    					  {
+    						  res.add((i-L.length+1)*size);
+        					  
+        					  count =0;
+        					  Arrays.fill(bUsed, false);
+    					  }
+    					  
+    				  }else
+    				  {
+    					  //more than once
+    					  count =0;
+    					  Arrays.fill(bUsed, false);
+    					  
+    				  }
+    			  }
+    		  }
+    		  
+    	  }
+    	  
+    	  return res;
+          
+      }
+      
+      public int minDistance(String word1, String word2) {
+    	  if(word1.length() ==0) return word2.length();
+    	  if(word2.length() ==0) return word1.length();
+    	  
+    	  int[][] res = new int[word1.length()+1][word2.length()+1];
+    	  res[0][0] = 0;
+    	  for(int i=1; i<=word1.length(); i++) res[i][0] = i;
+    	  for(int j=1; j<=word2.length(); j++) res[0][j] = j;
+    	  
+    	  for(int i=1; i<=word1.length(); i++)
+    	  {
+    		  for(int j=1; j<=word2.length(); j++)
+    		  {
+    			  if(word1.charAt(i-1) == word2.charAt(j-1))
+    			  {
+    				  res[i][j] = res[i-1][j-1];
+    			  }else
+    			  {
+    				  res[i][j] = Math.min(Math.min(res[i-1][j-1], res[i][j-1]), res[i-1][j])+1;
+    			  }
+    		  }
+    	  }
+    	  
+    	  return res[word1.length()][word2.length()];
+          
+      }
+
+      public boolean wordBreak(String s, Set<String> dict) {
+          if(s.length()==0) return true;
+          boolean[] res = new boolean[s.length()];
+          
+          for(int i=0; i<s.length(); i++)
+          {
+        	  for(String d:dict)
+              {
+            	  if(i >= d.length()-1 && s.substring(i-d.length()+1, i+1).equals(d))
+            	  {
+            		  res[i] = i-d.length()<0? true:res[i-d.length()];
+            		  if(res[i]==true) break;
+            	  }
+           
+              } 
+          }
+    	  return res[s.length()-1];
+      }
+      
+      public int numDistinct(String S, String T) {
+    	  if(S.equals(T)) return 1;
+    	  if(S.length()<=T.length()) return 0;
+    	  
+    	  int[][] res = new int[S.length()+1][T.length()+1];
+    	  res[0][0] = 1;
+    	  for(int i=1; i<S.length()+1; i++) res[i][0] = 1;
+    	  for(int j=1; j<T.length()+1; j++) res[0][j] = 0;
+    	  
+    	  for(int i=0; i<S.length(); i++)
+    	  {
+    		  for(int j=0; j<T.length(); j++)
+    		  {
+    			  if(i<j) res[i+1][j+1] = 0;
+    			  if(i==j) res[i+1][j+1] = S.substring(0, i+1).equals(T.substring(0, j+1))?1:0;
+    			  if(i>j)
+    			  {
+    				  if(S.charAt(i)==T.charAt(j))
+    				  {
+    					  res[i+1][j+1] = res[i][j]+res[i][j+1];
+    				  }else
+    				  {
+    					  res[i+1][j+1] = res[i][j+1];
+    				  }
+    			  }
+
+    		  }
+    	  }
+    	  
+    	  return res[S.length()][T.length()];
+          
+      }
+      
+      public ArrayList<ArrayList<Integer>> permuteUnique(int[] num) {
+    	  
+    	  ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+    	  if(num.length == 0) return res;
+    	  Arrays.sort(num);
+    	  ArrayList<Integer> init = new ArrayList<Integer>();
+    	  HashSet<String> dup=new HashSet<String>();
+    	  init.add(num[0]);
+    	  res.add(init);
+    	  dup.add(init.toString());
+    	  for(int i=1; i<num.length; i++)
+    	  {
+    		  int n = num[i];
+    		  for(int k=0; k<res.size(); k++)
+    		  {
+    			  ArrayList<Integer> t = res.get(k);
+    			  res.remove(k);
+    			  for(int j=0; j<=t.size(); j++)
+    			  {
+    				  ArrayList<Integer> nt=new ArrayList<Integer>();
+    				  nt.addAll(t);
+    				  nt.add(j, n);
+    				  if(!dup.contains(nt.toString()))
+    				  {
+    					  res.add(nt);
+    					  dup.add(nt.toString());
+    				  }
+    			  }
+    		  }
+   		  
+    	  }
+    	  return res;
+      }
+
 }

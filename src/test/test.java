@@ -31,7 +31,7 @@ public class test {
 		triangle.add(b);
 		
 		test testA =new test();
-		testA.numDecodings("10");
+		testA.divide(-2147483648, 1);
 		System.out.println();
 	}
 
@@ -1953,6 +1953,49 @@ public class test {
        
 	   return num[s.length()-1];
    }
+   
+   public int reverse(int x) {
+       int y=0;
+       while(x!=0 && y*10+x%10<Integer.MAX_VALUE && y*10+x%10>Integer.MIN_VALUE)
+       {
+    	   y = y*10+x%10;
+    	   x = x/10;
+       }
+       return y;
+   }
 
+   public boolean isPalindrome(int x) {
+       if(x == reverse(x) && x>=0) return true;
+       return false;
+   }
+   
+   public int divide(int dividend, int divisor) {
+	  if(divisor == 0) return 0;
+      int res = 0;
+      int loop = 0;
+      boolean sign = ((dividend>0&&divisor<0) || (dividend<0&&divisor>0)) ;
+            
+      int newdividend = dividend>0?-1*dividend:dividend;
+      int newdivisor = divisor>0?-1*divisor:divisor;
+      divisor = newdivisor;
+      
+      
+	   while(newdividend<=newdivisor)
+      {
+		   loop = loop==0?-1:loop+loop;
+   	   res+=loop;
+   	   newdividend = newdividend-newdivisor;
+   	   
+   	   if(Integer.MIN_VALUE - newdivisor > newdivisor || newdivisor+ newdivisor <newdividend)
+   	   {
+   		   newdivisor =  divisor;
+   		   loop = 0;
+   	   }else
+   		   newdivisor = newdivisor+ newdivisor;
+      }
+	   
+
+	   return sign?res:-res;
+   }
 }
 
