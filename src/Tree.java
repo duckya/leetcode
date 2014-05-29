@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.ArrayList;
@@ -27,14 +28,15 @@ public class Tree {
 	        TreeLinkNode next;
 	      }
 	public static void main (String args[]) {
+		char C[][] = {{'1','1'}};
 		Tree testA =new Tree();
 		TreeNode A = testA.new TreeNode(1);
 		A.left = testA.new TreeNode(0);
 			//A.next = testA.new ListNode(2);
 			//A.next.next = testA.new ListNode(3);
 			//A.next.next.next = testA.new ListNode(4);
-
-		testA.sumNumbers(A);
+		int[] b={4,2,0,3,2,5};
+		testA.maximalRectangle(C);
 		System.out.print("end");
 	}
 	
@@ -570,4 +572,229 @@ public class Tree {
     	
     	connect(leftMost);
     }
+    
+    public ArrayList<TreeNode> generateTrees(int n) {
+        ArrayList<TreeNode> res = new ArrayList<TreeNode>();
+        if(n==0){
+            res.add(null);
+        }else
+    	    res = makenode(1, n);
+    	return res;
+    }
+    
+    private ArrayList<TreeNode> makenode(int start, int end)
+    {
+    	ArrayList<TreeNode> res = new ArrayList<TreeNode>();
+    	if(start>end) {
+    		res.add(null);
+    		return res;
+    	}
+    	
+    	for(int i=start; i<=end; i++)
+    	{
+    		ArrayList<TreeNode> left = makenode(start, i-1);
+    		ArrayList<TreeNode> right = makenode(i+1, end);
+    		
+    		for(TreeNode l:left)
+    		{
+    			for(TreeNode r:right)
+    			{
+    				TreeNode node = new TreeNode(i);
+    				node.left = l; 
+    				node.right = r;
+    				res.add(node);
+    			}
+    		}
+
+    	}
+    	
+    	return res;
+    }
+    
+    public int largestRectangleAreaTLE(int[] height) {
+    	int max = 0;
+    	for(int i=0; i<height.length; i++)
+    	{
+    		int min = height[i];
+    		for(int j=i; j>=0; j--)
+    		{
+    			min = Math.min(height[j], min);
+    			max = Math.max(max, (i-j+1)*min);
+    		}
+    	}
+    	
+    	return max;
+        
+    }
+    
+    public int maximalRectangle(char[][] matrix) {
+    	if(matrix.length == 0 || matrix[0].length==0) return 0;
+    	int[] height = new int[matrix[0].length];
+    	int max = 0;
+    	for(int i=0; i<matrix.length; i++)
+    	{
+    		for(int j=0; j<matrix[i].length; j++)
+    		{
+    			if(matrix[i][j]=='0')
+    				height[j]=0;
+    			else
+    			{
+    				height[j]= height[j]+1;
+    			}
+    					
+    		}
+    		max = Math.max(max, largestRectangleAreaTLE(height));
+    		
+    	}
+    	return max;
+        
+    }
+    
+    
+    public int largestRectangleArea(int[] height) {
+        int max = 0;
+        if(height.length ==0) return 0;
+        
+        int[] nh = Arrays.copyOf(height, height.length+1);
+        nh[height.length] = 0;
+         	    	
+    	Stack<Integer> large = new Stack<Integer>();
+
+    	for(int i=0; i<nh.length; i++)
+    	{
+    		if(large.isEmpty() ||nh[i]>=nh[large.peek()])
+    		{
+    			large.add(i);
+    		}else
+    		{
+    			while(!large.isEmpty() && (nh[large.peek()]>nh[i] || large.peek() ==0))
+    			{
+    				int j=large.pop();
+    				max = Math.max(max, (large.isEmpty()?i:(i-j))*nh[j]);
+    				
+    			}
+    			large.add(i);
+    		}
+    	}
+    	return max;
+    }
+    
+    public TreeNode getTree(int[] numbers)
+    {
+    	return getTreeNode(numbers, 0, numbers.length-1);
+    }
+
+    private TreeNode getTreeNode(int[] numbers, int start, int end)
+    {
+    	if(end<start) return null;
+    	int mid = (start+end)/2;
+    	int val = numbers[mid];
+    	TreeNode root = new TreeNode(val);
+    	root.left = getTreeNode(numbers, start, mid-1);
+    	root.right = getTreeNode(numbers, mid+1, end);
+    	return root;
+
+    }
+    
+    public ArrayList<LinkedList<TreeNode>> getlistFromTree(TreeNode root)
+    {
+    	ArrayList<LinkedList<TreeNode>> res = new ArrayList<LinkedList<TreeNode>>();
+    	
+    	if(root==null) return res;
+    	LinkedList<TreeNode> l = new LinkedList<TreeNode>();
+    	l.add(root);
+    	res.add(l);
+    	int level = 1;
+    	
+    	while(true)
+    	{
+    		LinkedList<TreeNode> pl = res.get(level);
+    		LinkedList<TreeNode> nl = res.get(level);
+    		for(TreeNode node:pl)
+    		{
+    			if(node.left!=null) nl.add(node.left);
+    			if(node.right!=null) nl.add(node.right);
+    		}
+    		if(nl.size()>0)
+    			res.add(nl);
+    		else
+    			return res;
+    		
+    		level++;
+
+    	}
+    	
+    	
+    }
+    
+    public TreeNode getancestor(TreeNode root, TreeNode p, TreeNode q)
+    {
+    	if(cover(root.left, p) && cover(root.left, q))
+    		return getancestor(root.left, p, q);
+
+    	if(cover(root.right, p) && cover(root.right, q))
+    		return getancestor(root.right, p, q);
+
+    	return root;
+
+    }
+
+    private boolean cover(TreeNode root, TreeNode p)
+    {
+    	Stack<Integer> s = new Stack<Integer>();
+
+    	if(root == null) return false;
+    	if(root == p) return true;
+
+    	return cover(root.left,p)||cover(root.right,p);
+    }
+    
+    public boolean isSubTree(TreeNode p, TreeNode q)
+    {
+    	if(q==null) return true;	
+    	if(p==null) return false;
+    	
+    	if(p.val==q.val)
+    		if(isMatch(p, q)) return true;
+    	return isSubTree(p.left, q) || isSubTree(p.right, q);
+
+    }
+
+    private boolean isMatch(TreeNode p, TreeNode q)
+    {
+    	if(p == null && q == null ) return true;
+    	if(p == null || q == null ) return false;
+
+    	if(p.val == q.val) return isMatch(p.left, q.left) && isMatch(p.right, q.right);
+    	return false;
+    }
+    
+    
+    private void getPath(TreeNode root, int sum, ArrayList<Integer> path, ArrayList<ArrayList<Integer>> res)
+    {
+        if(root.left==null && root.right ==null&& root.val == sum)
+        {
+            path.add(root.val);
+            ArrayList<Integer> newpath=new ArrayList<Integer>();
+            newpath.addAll(path);
+            res.add(newpath);
+            path.remove(root.val);
+            return;
+        }
+        
+        path.add(root.val);
+        if(root.left!=null)
+        {
+            getPath(root.left, sum-root.val, path, res);
+        }   
+        if(root.right!=null)
+        {
+            getPath(root.right, sum-root.val, path, res);
+        } 
+        path.remove(root.val);
+        return;
+        
+    }
+    
+    
 }

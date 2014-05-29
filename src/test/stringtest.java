@@ -18,10 +18,10 @@ public class stringtest {
 
 		char[][] board = new char[3][3];
 
-		String t = "barfoothefoobarman"; 
+		String[] t = {"a","b","c","d","e"}; 
 		stringtest testA =new stringtest();
 		//testA.longestPalindrome(t);
-		testA.wordBreak("dogs", B);
+		testA.fullJustify(t, 3);
 	}
 	
     public String reverseWords(String s) {
@@ -1347,10 +1347,11 @@ public class stringtest {
     	  for(int i=1; i<num.length; i++)
     	  {
     		  int n = num[i];
-    		  for(int k=0; k<res.size(); k++)
+    		  int size = res.size();
+    		  for(int k=0; k<size; k++)
     		  {
-    			  ArrayList<Integer> t = res.get(k);
-    			  res.remove(k);
+    			  ArrayList<Integer> t = res.get(0);
+    			  res.remove(0);
     			  for(int j=0; j<=t.size(); j++)
     			  {
     				  ArrayList<Integer> nt=new ArrayList<Integer>();
@@ -1364,8 +1365,153 @@ public class stringtest {
     			  }
     		  }
    		  
+   		  
     	  }
     	  return res;
       }
+      
+      public boolean isScramble(String s1, String s2) {
+    	  return scramble(s1).get(s1).contains(s2);
+      }
+      
+      private HashMap<String, HashSet<String>> scramble(String s)
+      {
+    	  HashMap<String, HashSet<String>> res = new HashMap<String, HashSet<String>>();
+    	  
+    	  if(s.length() ==0) return res;
+    	  
+    	  for(int i=0; i<s.length(); i++)
+    	  {
+    		  String curr = s.substring(i, i+1);
+    		  if(!res.containsKey(curr))
+    		  {
+	    		  HashSet<String> path = new HashSet<String>();
+	    		  path.add(curr); 
+	    		  res.put(curr, path);
+    		  }
+    	  }
+    	  
+		  for(int x=2; x<=s.length(); x++)
+		  {
+	    	  for(int i=0; i<=s.length()-x; i++)
+	    	  {
+	    			  String curr = s.substring(i, i+x);
+	        		  if(!res.containsKey(curr))
+	        		  {
+	        			  HashSet<String> path = new HashSet<String>();
+	        			  for(int k=1; k<curr.length(); k++)
+	        			  {
+	        				  
+	            	   		  HashSet<String> left = res.get(curr.substring(0, k));
+	                		  HashSet<String> right = res.get(curr.substring(k, curr.length()));
+	                		  for(String l:left)
+	                		  {
+	                			  for(String r:right)
+	                			  {
+	                				  if(!path.contains(l+r)) path.add(l+r);
+	                				  if(!path.contains(r+l)) path.add(r+l);         	    		  	  
+	                			  }
+	                		  }
+	        			  }
+	        			  res.put(curr, path);			    		  
+	        		  }		  
+	    		  
+    		  }
+    	  }
+    	  
+    	  return res;    	  
+      }
 
+      public ArrayList<String> wordBreak2(String s, Set<String> dict) {
+    	  ArrayList<String> res = new ArrayList<String>();
+    	  ArrayList<String> path = new ArrayList<String>();
+    	  breakWord(s, dict, path, res);
+    	  return res;
+      }
+      
+      private void breakWord(String s, Set<String> dict, ArrayList<String> path, ArrayList<String> res)
+      {
+    	  if(s.length() ==0) 
+    	  {
+    		 String r=""; 
+    		 for(String p:path)
+    		 {
+    			 r = r+ (r.length()==0?p:" "+p);
+    		 }
+    		 res.add(r);
+    		 return;
+    	  }
+    	  
+    	  
+    	  for(int i=1; i<=s.length(); i++)
+    	  {
+    		  String curr = s.substring(0, i);
+    		  for(String d:dict)
+    		  {
+    			  if(curr.equals(d))
+    			  {
+    				  path.add(d); 
+    				  breakWord(s.substring(i), dict, path, res);
+    				  path.remove(d); 
+    			  }
+    		  }
+    	  }
+      }
+      
+      public ArrayList<String> fullJustify(String[] words, int L) {
+    	  ArrayList<String> res = new ArrayList<String>();
+    	  String line= "";
+    	  for(int i=0; i<words.length; i++)
+    	  {
+    	      int ll = line.length()==0?words[i].length():line.length()+1+words[i].length();
+    		  if(ll<=L)
+    		  {
+    			  line = line.length()==0?words[i]:line+" "+words[i];
+    			 
+    		  }else
+    		  {
+    			  res.add(line);
+    			  line=words[i];
+    		  }   
+    		  if(i==words.length-1) res.add(line);
+    	  }
+    	  if(res.size() ==0) res.add("");
+    	  
+    	  for(int i=0; i<res.size()-1; i++)
+    	  {
+    		  line = res.get(i);
+    		  int extra = L-line.length();
+    		  String[] w = line.split(" ");
+    		  int spaces = w.length==1?extra: extra/(w.length-1);
+    		  int mode = w.length==1?0:extra%(w.length-1);
+    		  line = w[0];
+    		  for(int j=1; j<w.length; j++)
+    		  {
+    			  if(j<mode)
+    				  line = line + dup(spaces+2) + w[j];
+    			  else
+    				  line = line + dup(spaces+1) + w[j];
+    			  
+    			  res.set(i, line);
+    		  }
+    	  }
+    	  
+    	  line = res.get(res.size()-1);
+    	  int extra = L-line.length();
+    	  line = line + dup(extra);
+    	  res.set(res.size()-1, line);
+    	  
+    	  return res;
+          
+      }
+      
+      private String dup(int n)
+      {
+    	  String res = "";
+    	  for(int i=0; i<n; i++)
+    	  {
+    		  res += " ";
+    	  }
+    	  return res;
+      }
 }

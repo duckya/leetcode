@@ -10,7 +10,7 @@ public class test {
 
 	public static void main (String args[]) {
 		int A[][] = {{1,2,3},{8,1,4}, {7,6,5}};
-		int B[] = {1,2};
+		int B[] = {2,2,3,2};
 		HashSet<String> dict = new HashSet<String>();
 		dict.add("hot"); 
 		dict.add("cog"); 
@@ -31,7 +31,7 @@ public class test {
 		triangle.add(b);
 		
 		test testA =new test();
-		testA.divide(-2147483648, 1);
+		testA.singleNumber2(B);
 		System.out.println();
 	}
 
@@ -121,17 +121,6 @@ public class test {
 		return x;
     }
     
-    public int singleNumber2(int[] A) {
-       
-		if(A.length <= 3) return A[0];
-		for(int i=0; i<A.length; i++)
-        {
-
-        }
-		
-		return 0;
-    }
-	
     public int longestConsecutive(int[] num) {
         HashMap<Integer, Boolean> maps= new HashMap<Integer, Boolean>();
         int maxLengh = 0;
@@ -1996,6 +1985,93 @@ public class test {
 	   
 
 	   return sign?res:-res;
+   }
+   
+   public int singleNumber2(int[] A) {
+	   HashMap<Integer, Integer> rec = new HashMap<Integer, Integer>();
+	   for(int a:A)
+	   {
+		   if(!rec.containsKey(a)) rec.put(a, 1);
+		   else if(rec.get(a)<2) rec.put(a, rec.get(a)+1);
+		   else rec.remove(a);   
+	   }
+	   
+	   return (int) rec.keySet().toArray()[0];
+       
+   }
+   
+   public ArrayList<Integer> grayCode(int n) {
+       ArrayList<Integer> res = new ArrayList<Integer>();
+       ArrayList<String> tempres = new ArrayList<String>();
+       
+       if(n==0){
+           res.add(0);
+           return res;
+       }  
+       
+       for(int i=1; i<=n; i++)
+       {
+    	   int size = tempres.size();
+    	   if(size == 0)
+    	   {
+    		   tempres.add("0");
+			   tempres.add("1");
+    	   }else
+    	   {
+	    	   boolean bzero = true;
+	    	   for(int j=0; j<size; j++)
+	    	   {
+	    		   String curr = tempres.get(0);
+	    		   tempres.remove(0);
+	    		   if(bzero)
+	    		   {
+	    			   tempres.add(curr + "0");
+	    			   tempres.add(curr + "1");
+	    			   bzero =false;
+	    		   }else
+	    		   {
+	    			   tempres.add(curr + "1");
+	    			   tempres.add(curr + "0");
+	    			   bzero =true;
+	    		   } 
+	    	   }
+    	   }
+       }
+       
+       for(String s:tempres)
+       {
+    	   res.add(Integer.parseInt(s, 2));
+       }
+       
+       return res;
+   }
+   
+   public int maxProfit3(int[] prices) {
+	   if(prices.length<2) return 0;
+	   
+       int[] first = new int[prices.length];
+       int[] second = new int[prices.length];
+       
+       int min=prices[0];
+       int max = prices[prices.length-1];
+       for(int i=1; i<prices.length; i++)
+       {
+    	   min = Math.min(min, prices[i]);
+    	   first[i] = Math.max(first[i-1], prices[i]-min);
+       }
+       
+       for(int i=prices.length-2; i>=0; i--)
+       {
+    	   max = Math.max(max, prices[i]);
+    	   second[i] = Math.max(second[i+1], max - prices[i]);
+       }
+       max = 0;
+       for(int i=0; i<prices.length; i++)
+       {
+    	   max = Math.max(max, first[i]+second[i]);
+       }
+       
+       return max;
    }
 }
 
