@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import test.linklist.ListNode;
+
 import java.util.Hashtable;
 
 
@@ -38,6 +40,24 @@ public class linklist {
 		System.out.print("end");
 	}
     
+	void maxSlidingWindow(int A[], int n, int w, int B[]) {
+		  LinkedList<Integer> Q = new LinkedList<Integer>();
+		  for (int i = 0; i < w; i++) {
+		    while (!Q.isEmpty() && A[i] >= A[Q.getLast()])
+		      Q.removeLast();
+		    Q.addLast(i);
+		  }
+		  for (int i = w; i < n; i++) {
+		    B[i-w] = A[Q.getFirst()];
+		    while (!Q.isEmpty() && A[i] >= A[Q.getLast()])
+		      Q.removeLast();
+		    while (!Q.isEmpty() && Q.getFirst() <= i-w)
+		      Q.removeFirst();
+		    Q.addLast(i);
+		  }
+		  B[n-w] = A[Q.getFirst()];
+		}
+	
     private ListNode insertAfterFirst(ListNode newnode, ListNode head) {
     	if(head == null) return head;
     	

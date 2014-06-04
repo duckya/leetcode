@@ -15,7 +15,81 @@ public class CCArrayandStrings {
 		testA.printfive(250);
 		System.out.println();
 	}
+
+	public String compress(String input)
+	{
+		if(input.length()==0) return input;
+		StringBuffer res = new StringBuffer();
+		char[] c = input.toCharArray();
+		
+		char lastChar=c[0];
+		int lastIndex = 0;
+		int count = 0;
+		for(int i=1; i<c.length; i++)
+		{
+			if(c[i]!=lastChar)
+			{
+				count = i-lastIndex;
+				res.append(lastChar);
+				res.append(count);
+				lastIndex = i;
+				lastChar = c[i];
+			}
+		}
+		res.append(lastChar);
+		res.append(count);
+				
+		return (res.length()<input.length()?res.toString():input);
+	}
+	public boolean isUnique(String input)
+	{
+		if(input.length() > 256) return false;
+		boolean[] isUsed = new boolean[256];
+		
+		for(int i=0; i<input.length(); i++)
+		{
+			if(isUsed[input.charAt(i)])
+				return false;
+			else
+				isUsed[input.charAt(i)] = true;	
+				
+		}
+		return true;
+	}
 	
+    public String reverseWords2(String s) {
+    	char[] c = s.toCharArray();
+    	int start = 0; 
+    	int end  = c.length;
+    	
+    	while(start<end)
+    	{
+    		char t = c[start];
+    		c[start] = c[end];
+    		c[end] = t;
+    		start++; 
+    		end--;
+    	}
+    	
+    	return new String(c);
+        
+    }
+	
+    public String reverseWords(String s) {
+        String res = "";
+        int lastIndex = s.length();
+        for(int i=s.length()-1; i>=0; i--)
+        {
+            if(s.charAt(i)==' ')
+            {
+                if(i!=lastIndex -1)
+                    res = s.substring(i+1, lastIndex);
+                lastIndex = i;
+            }
+                
+        }
+        return res;
+    }
 	public void printfive(int n)
 	{
 		for(int i=0; i<=n; i++)
@@ -232,45 +306,31 @@ public class CCArrayandStrings {
 		return true;
 	}
 	
-	public String ReplaceSpace(String s)
+
+	
+	public String ReplaceSpace(char s[], int length)
 	{
-		for(int i=s.length()-1; i>=0; i--)
+		int count = 0;
+		for(int i=s.length-1; i>=0; i--)
+			if(s[i] == ' ') count++;
+		
+		for(int i=s.length-1, j=s.length-1+count*2; i>=0; i--, j--)
 		{
-			if(s.charAt(i) == ' ')
-				s=s.substring(0, i) + "%20" + (i==s.length()-1?"":s.substring(i+1, s.length()));
+			if(s[i] == ' ')
+			{
+				s[j] = '0';
+				s[j-1] = '2';
+				s[j-2] = '%';
+				j = j-2;
+			}
+			else
+				s[j] = s[i];
+			
 		}
-		return s;
+		return new String(s);
 	}
 	
-	public char[] ReplaceSpace(char[] word)
-	{
-		int spacect=0;
-		for(int i=0; i<word.length; i++)
-		{
-			if(word[i]==' ') spacect++;		
-		}
 
-		char[] newword = new char[word.length+spacect*2];
-
-
-		for(int i=0, j=0; i<word.length; i++, j++)
-		{
-			if(word[i]== ' ' )
-			{
-				newword[j] = '%';
-				newword[j+1] = '2';
-				newword[j+2] = '0';
-				j=j+2;
-				
-			}else
-			{
-				newword[j] = word[i];
-			}
-		}
-		
-		return newword;
-
-	}
 	
 	public void setZero(int[][] matrix)
 	{
@@ -347,6 +407,7 @@ public class CCArrayandStrings {
 			
 		}
 		return res;
+		//Arrays.sort(arg0, arg1, arg2);
 	}
 	
 	public static void printFive(int n)
@@ -354,6 +415,7 @@ public class CCArrayandStrings {
 	    for(int i=0; i<=n; i++)
 	    {
 	       String x = String.valueOf(i);
+	       //x.lastIndexOf(ch)
 	       char[] ar = x.toCharArray();
 	       for(int j=0; j<ar.length; j++)
 	       {
@@ -366,4 +428,5 @@ public class CCArrayandStrings {
 	    }
 	    
 	  }
+	
 }

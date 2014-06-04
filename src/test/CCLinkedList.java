@@ -1,5 +1,7 @@
 package test;
 
+import java.util.HashSet;
+
 public class CCLinkedList {
 	public class ListNode {
 	    int val;
@@ -10,31 +12,144 @@ public class CCLinkedList {
 	    }
 	}
 	
+	public boolean isPalindrome(ListNode head)
+	{
+		if(head==null || head.next==null) return true;
+		ListNode cur = head;
+		ListNode tail=null;
+		while(cur!=null)
+		{
+			ListNode copy = new ListNode(cur.val);
+			copy.next = tail;
+			tail = copy;
+			cur = cur.next;
+		}
+		
+		cur = head;
+		while(cur!=null)
+		{
+			if(cur.val!=tail.val)
+				return false;
+			tail = tail.next;
+			cur = cur.next;
+		}
+		return true;
+		
+	}
+	
+	
+	public ListNode partitionList(ListNode head, int val)
+	{
+		if(head==null || head.next==null) return head;
+		ListNode dummy=new ListNode(-1);
+		dummy.next = head;
+		ListNode cur=head, prev = dummy;
+		
+		while(cur!=null)
+		{
+			if(cur.val>= val)
+			{
+				prev = cur;
+				cur=cur.next;
+			}else
+			{
+				if(cur==head)
+				{
+					head=head.next;
+					prev = cur;
+					cur=cur.next;
+					
+				}else
+				{
+					prev.next = cur.next;
+					cur.next = dummy.next;
+					dummy.next = cur;
+					cur=prev.next;
+				}
+			}
+		}
+		
+		
+		
+		return dummy.next;
+	}
+	public void deletenode (ListNode head)
+	{
+		if(head==null) return;
+		if(head.next == null) return;
+		head.val =head.next.val;
+		head.next = head.next.next;
+		return;
+	}
+	
+	public void removedup1(ListNode head)
+	{
+		if(head==null || head.next==null) return;
+		HashSet<Integer> set = new HashSet<Integer>();
+		ListNode cur= head, pre=null;
+		while(cur!=null)
+		{
+			if(!set.contains(cur.val))
+			{
+				set.add(cur.val);
+				pre = cur;
+			}
+			else
+			{
+				pre.next = cur.next;
+			}
+			cur=cur.next;
+			
+		}
+		return;
+		
+	}
+	
 	public void removedup(ListNode head)
 	{
 		if(head == null || head.next == null) return;
-		ListNode curr = head.next; 
-		ListNode unique, prev=head;
-		while(curr!=null)
+		ListNode curr = head; 
+		ListNode unique = head;
+		while(unique!=null)
 		{
-			
-			for(unique = head; unique !=curr; unique=unique.next)
+			curr = unique;
+			while(curr.next!=null)
 			{
-				if(unique.val == curr.val)
+				if(curr.next.val==unique.val)
 				{
-					prev.next = curr.next;
+					curr.next = curr.next.next;
+				}else
 					curr = curr.next;
-					break;
-				}
 			}
 			
-			if(curr == unique)	
-			{
-				prev = curr;
-				curr = curr.next;
-			}
+			
+			unique = unique.next;
 		}
 
+	}
+	
+	
+	
+	public ListNode kthtoLast(ListNode head, int k)
+	{
+		if(head==null) return null;
+		if(k==0) return head;
+		ListNode p1 = head;
+		ListNode p2 = head;
+		
+		while(k>0 && p1!=null)
+		{
+			p1=p1.next;
+			k--;
+		}
+		if(k>0) return null;
+		
+		while(p1!=null)
+		{
+			p2=p2.next;
+			p1=p1.next;
+		}
+		return p2;
 	}
 	
 	public ListNode add(ListNode l1, ListNode l2)

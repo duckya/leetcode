@@ -22,6 +22,8 @@ public class stringtest {
 		stringtest testA =new stringtest();
 		//testA.longestPalindrome(t);
 		testA.fullJustify(t, 3);
+		StringBuffer sb= new StringBuffer("init");
+		//sb.toString().insert(index, str, offset, len).delete(start, end).charAt(index).append(arg0)
 	}
 	
     public String reverseWords(String s) {
